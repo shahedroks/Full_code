@@ -1,0 +1,92 @@
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:renizo/core/models/user.dart';
+
+/// Persists auth session – aligned with React AuthService session.
+class AuthLocalStorage {
+  static const _keyToken = 'token';
+  static const _keyEmail = 'email';
+  static const _keyUserId = 'userId';
+  static const _keyUserName = 'userName';
+  static const _keyUserRole = 'userRole';
+  static const _keyUserPhone = 'userPhone';
+  static const _keyHasOnboarded = 'hasOnboarded_';
+  static const _keySelectedTown = 'selectedTown_';
+
+  static Future<SharedPreferences> get _pref async => SharedPreferences.getInstance();
+
+  static Future<void> saveSession({
+    required String token,
+    required String email,
+    required String userId,
+    required String name,
+    required String role,
+    required String phone,
+  }) async {
+    final p = await _pref;
+    await p.setString(_keyToken, token);
+    await p.setString(_keyEmail, email);
+    await p.setString(_keyUserId, userId);
+    await p.setString(_keyUserName, name);
+    await p.setString(_keyUserRole, role);
+    await p.setString(_keyUserPhone, phone);
+  }
+
+  static Future<void> clearSession() async {
+    final p = await _pref;
+    await p.remove(_keyToken);
+    await p.remove(_keyEmail);
+    await p.remove(_keyUserId);
+    await p.remove(_keyUserName);
+    await p.remove(_keyUserRole);
+    await p.remove(_keyUserPhone);
+  }
+
+  static Future<String?> getToken() async {
+    final p = await _pref;
+    return p.getString(_keyToken);
+  }
+
+  static Future<String?> getEmail() async {
+    final p = await _pref;
+    return p.getString(_keyEmail);
+  }
+
+  static Future<User?> getCurrentUser() async {
+    final p = await _pref;
+    final id = p.getString(_keyUserId);
+    final email = p.getString(_keyEmail);
+    final name = p.getString(_keyUserName);
+    final roleStr = p.getString(_keyUserRole);
+    final phone = p.getString(_keyUserPhone);
+    if (id == null || email == null || name == null || roleStr == null) return null;
+    final role = roleStr == 'provider' ? UserRole.provider : UserRole.customer;
+    return User(
+      id: id,
+      email: email,
+      name: name,
+      role: role,
+      phone: phone ?? '',
+      createdAt: '',
+    );
+  }
+
+  static Future<bool> hasOnboarded(String userId) async {
+    final p = await _pref;
+    return p.getBool(_keyHasOnboarded + userId) ?? false;
+  }
+
+  static Future<void> setOnboarded(String userId) async {
+    final p = await _pref;
+    await p.setBool(_keyHasOnboarded + userId, true);
+  }
+
+  static Future<void> setSelectedTown(String userId, String townJson) async {
+    final p = await _pref;
+    await p.setString(_keySelectedTown + userId, townJson);
+  }
+
+  static Future<String?> getSelectedTown(String userId) async {
+    final p = await _pref;
+    return p.getString(_keySelectedTown + userId);
+  }
+}
