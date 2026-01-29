@@ -20,7 +20,6 @@ class GlobalSnackBar {
     hide();
 
     final overlay = Overlay.of(context, rootOverlay: true);
-    if (overlay == null) return;
 
     final media = MediaQuery.of(context);
     final safeTop = media.padding.top;
@@ -59,7 +58,7 @@ class GlobalSnackBar {
   }
 
   static void hide() {
-    _entry?..remove();
+    _entry?.remove();
     _entry = null;
   }
 

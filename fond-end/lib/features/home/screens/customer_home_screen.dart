@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:renizo/core/constants/color_control/all_color.dart';
+import 'package:renizo/core/models/provider_list_item.dart';
 import 'package:renizo/core/models/service_category.dart';
+import 'package:renizo/features/home/widgets/featured_providers.dart';
 import 'package:renizo/features/home/widgets/service_categories.dart';
 import 'package:renizo/features/home/widgets/welcome_banner.dart';
 
@@ -42,6 +44,11 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
     debugPrint('Selected category: ${category.name}');
   }
 
+  void _onSelectProvider(ProviderListItem provider) {
+    // TODO: Navigate to provider profile / booking (e.g. getProviderById then push)
+    debugPrint('Selected provider: ${provider.displayName} (${provider.id})');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,6 +64,12 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
                 categories: _categories,
                 onSelectCategory: _onSelectCategory,
                 loading: _loading,
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: FeaturedProvidersWidget(
+                selectedTownId: widget.selectedTownId ?? '',
+                onSelectProvider: _onSelectProvider,
               ),
             ),
             SliverToBoxAdapter(child: SizedBox(height: 24.h)),

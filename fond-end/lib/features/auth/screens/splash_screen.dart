@@ -1,7 +1,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:renizo/core/constants/color_control/all_color.dart';
 import 'package:renizo/core/constants/image_control/image_path.dart';
 import 'package:renizo/features/auth/logic/splash_login_check.dart';

@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:renizo/core/utils/auth_local_storage.dart';
 import 'package:renizo/core/widget/global_snack_bar.dart';

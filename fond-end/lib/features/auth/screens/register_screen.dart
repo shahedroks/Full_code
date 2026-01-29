@@ -4,11 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:renizo/core/constants/color_control/all_color.dart';
 import 'package:renizo/core/models/user.dart';
 import 'package:renizo/core/utils/auth_local_storage.dart';
-import 'package:renizo/features/auth/screens/login_screen.dart';
-import 'package:renizo/features/nav_bar/screen/bottom_nav_bar.dart';
 import 'package:renizo/features/onboarding/screens/onboarding_slides_screen.dart';
 import 'package:renizo/features/seller/screens/seller_bottom_nav.dart';
-import 'package:renizo/features/town/screens/town_selection_screen.dart';
 
 /// Register – converted from React RegisterScreen.tsx.
 class RegisterScreen extends StatefulWidget {

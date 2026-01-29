@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:renizo/core/constants/color_control/all_color.dart';
-import 'package:renizo/core/models/user.dart';
 import 'package:renizo/core/utils/auth_local_storage.dart';
 import 'package:renizo/features/auth/screens/register_screen.dart';
 import 'package:renizo/features/nav_bar/screen/bottom_nav_bar.dart';
@@ -20,8 +19,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _emailController = TextEditingController(text: 'customer@demo.com');
-  final _passwordController = TextEditingController(text: 'password');
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
   bool _obscurePassword = true;
   bool _loading = false;
   String? _error;
@@ -35,18 +34,17 @@ class _LoginScreenState extends State<LoginScreen> {
 
   // ✅ label like screenshot
   Widget _authLabel(String text) => Padding(
-        padding: EdgeInsets.only(bottom: 8.h),
-        child: Text(
-          text,
-           textAlign: TextAlign.start,
-          style: TextStyle(
-           
-            fontSize: 12.sp,
-            fontWeight: FontWeight.w600,
-            color: AllColor.white,
-          ),
-        ),
-      );
+    padding: EdgeInsets.only(bottom: 8.h),
+    child: Text(
+      text,
+      textAlign: TextAlign.start,
+      style: TextStyle(
+        fontSize: 12.sp,
+        fontWeight: FontWeight.w600,
+        color: AllColor.white,
+      ),
+    ),
+  );
 
   // ✅ input decoration like screenshot
   InputDecoration _authDecoration({
@@ -83,18 +81,18 @@ class _LoginScreenState extends State<LoginScreen> {
 
   // ✅ shadow wrapper (field)
   Widget _fieldWrapper(Widget child) => Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(14.r),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.08),
-              blurRadius: 14,
-              offset: const Offset(0, 6),
-            ),
-          ],
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(14.r),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.08),
+          blurRadius: 14,
+          offset: const Offset(0, 6),
         ),
-        child: child,
-      );
+      ],
+    ),
+    child: child,
+  );
 
   Future<void> _login() async {
     setState(() {
@@ -162,7 +160,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       color: Colors.black26,
                       blurRadius: 12,
                       offset: Offset(0, 4),
-                    )
+                    ),
                   ],
                 ),
                 child: ClipRRect(
@@ -201,8 +199,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   decoration: BoxDecoration(
                     color: AllColor.destructive.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(12.r),
-                    border:
-                        Border.all(color: AllColor.destructive.withOpacity(0.5)),
+                    border: Border.all(
+                      color: AllColor.destructive.withOpacity(0.5),
+                    ),
                   ),
                   child: Text(
                     _error!,
@@ -248,8 +247,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         size: 18.sp,
                         color: AllColor.mutedForeground,
                       ),
-                      onPressed: () => setState(
-                          () => _obscurePassword = !_obscurePassword),
+                      onPressed: () =>
+                          setState(() => _obscurePassword = !_obscurePassword),
                     ),
                   ),
                 ),
@@ -298,7 +297,9 @@ class _LoginScreenState extends State<LoginScreen> {
               SizedBox(height: 24.h),
               Row(
                 children: [
-                  Expanded(child: Divider(color: AllColor.white.withOpacity(0.4))),
+                  Expanded(
+                    child: Divider(color: AllColor.white.withOpacity(0.4)),
+                  ),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16.w),
                     child: Text(
@@ -309,7 +310,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ),
-                  Expanded(child: Divider(color: AllColor.white.withOpacity(0.4))),
+                  Expanded(
+                    child: Divider(color: AllColor.white.withOpacity(0.4)),
+                  ),
                 ],
               ),
               SizedBox(height: 24.h),
