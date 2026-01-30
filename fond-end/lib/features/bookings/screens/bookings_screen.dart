@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:renizo/features/bookings/data/bookings_mock_data.dart';
+import 'package:renizo/features/bookings/screens/booking_details_screen.dart';
 import 'package:renizo/features/bookings/screens/task_submission_screen.dart';
 
 /// Bookings list – full conversion from React BookingsScreen.tsx.
@@ -63,6 +64,34 @@ class _BookingsScreenState extends State<BookingsScreen> {
         ),
       ),
     );
+  }
+
+  void _openBookingDetails(String bookingId) {
+    widget.onSelectBooking?.call(bookingId);
+    if (!mounted) return;
+    Navigator.of(context).push<void>(
+      MaterialPageRoute<void>(
+        builder: (context) => BookingDetailsScreen(
+          bookingId: bookingId,
+          onBack: () => Navigator.of(context).pop(),
+          onOpenChat: (id) {
+            if (!context.mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Open chat for $id')),
+            );
+          },
+          onUpdateBooking: (id, status) {
+            if (!context.mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Booking ${status.name}')),
+            );
+          },
+          userRole: UserRole.customer,
+        ),
+      ),
+    ).then((_) {
+      if (mounted) _loadBookings();
+    });
   }
 
   @override
@@ -172,14 +201,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
           padding: EdgeInsets.only(bottom: 12.h),
           child: BookingCard(
             booking: booking,
-            onSelect: () {
-              widget.onSelectBooking?.call(booking.id);
-              if (widget.onSelectBooking == null && mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Booking ${booking.id}')),
-                );
-              }
-            },
+            onSelect: () => _openBookingDetails(booking.id),
           ),
         );
       },

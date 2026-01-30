@@ -27,6 +27,39 @@ enum BookingStatus {
   cancelled,
 }
 
+/// Full booking details for BookingDetailsScreen – mirrors React getBookingById + related data.
+class BookingDetailsModel {
+  const BookingDetailsModel({
+    required this.id,
+    required this.providerName,
+    required this.providerAvatar,
+    required this.categoryName,
+    required this.townName,
+    required this.scheduledDate,
+    required this.scheduledTime,
+    required this.address,
+    this.notes,
+    required this.status,
+    required this.paymentStatus,
+    this.totalAmount,
+  });
+
+  final String id;
+  final String providerName;
+  final String providerAvatar;
+  final String categoryName;
+  final String townName;
+  final String scheduledDate; // "2026-01-17"
+  final String scheduledTime; // "10:00"
+  final String address;
+  final String? notes;
+  final BookingStatus status;
+  final PaymentStatus paymentStatus;
+  final double? totalAmount;
+}
+
+enum PaymentStatus { unpaid, paidInApp, paidOutside }
+
 /// Mock load: returns display bookings for customer (mirrors AppService.getBookingsByCustomer + transform).
 /// Uses customer1; one sample booking so list is non-empty by default.
 Future<List<BookingDisplayItem>> loadBookingsForCustomer(String customerId) async {
@@ -62,4 +95,48 @@ Future<List<BookingDisplayItem>> loadBookingsForCustomer(String customerId) asyn
       categoryName: 'Residential Cleaning',
     ),
   ];
+}
+
+/// Mock getBookingById – returns full details for BookingDetailsScreen (mirrors AppService.getBookingById + related).
+Future<BookingDetailsModel?> getBookingById(String bookingId) async {
+  await Future.delayed(const Duration(milliseconds: 400));
+  final now = DateTime.now();
+  final today = DateTime(now.year, now.month, now.day);
+  final tomorrow = today.add(const Duration(days: 1));
+  final todayStr = '${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}';
+  final tomorrowStr = '${tomorrow.year}-${tomorrow.month.toString().padLeft(2, '0')}-${tomorrow.day.toString().padLeft(2, '0')}';
+  switch (bookingId) {
+    case 'booking1':
+      return BookingDetailsModel(
+        id: 'booking1',
+        providerName: 'Mike Johnson',
+        providerAvatar: '',
+        categoryName: 'Residential Cleaning',
+        townName: 'Terrace',
+        scheduledDate: tomorrowStr,
+        scheduledTime: '10:00',
+        address: '456 Oak Avenue, Terrace, BC',
+        notes: 'Need regular house cleaning with window cleaning',
+        status: BookingStatus.pending,
+        paymentStatus: PaymentStatus.unpaid,
+        totalAmount: 150,
+      );
+    case 'booking2':
+      return BookingDetailsModel(
+        id: 'booking2',
+        providerName: 'Sparkle Home Cleaning',
+        providerAvatar: '',
+        categoryName: 'Residential Cleaning',
+        townName: 'Terrace',
+        scheduledDate: todayStr,
+        scheduledTime: '15:00',
+        address: '123 Main St, Terrace, BC',
+        notes: null,
+        status: BookingStatus.confirmed,
+        paymentStatus: PaymentStatus.paidInApp,
+        totalAmount: 145,
+      );
+    default:
+      return null;
+  }
 }
