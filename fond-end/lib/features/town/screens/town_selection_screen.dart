@@ -96,6 +96,7 @@ class _TownSelectionScreenState extends State<TownSelectionScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                SizedBox(height: 30.h),
                 if (widget.canClose)
                   Align(
                     alignment: Alignment.topRight,

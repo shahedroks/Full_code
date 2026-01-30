@@ -11,10 +11,13 @@ class FeaturedProvidersWidget extends StatefulWidget {
     super.key,
     required this.selectedTownId,
     required this.onSelectProvider,
+    /// When true, header title and subtitle use light colors (e.g. on blue background).
+    this.lightHeader = false,
   });
 
   final String selectedTownId;
   final void Function(ProviderListItem provider) onSelectProvider;
+  final bool lightHeader;
 
   @override
   State<FeaturedProvidersWidget> createState() => _FeaturedProvidersWidgetState();
@@ -24,41 +27,47 @@ class _FeaturedProvidersWidgetState extends State<FeaturedProvidersWidget> {
   List<ProviderListItem> _providers = [];
   bool _loading = true;
 
+  /// Avatar URLs from MockDataRepository.ts (providerAvatars) – same as React app.
+  static const String _avatarSparkle =
+      'https://images.unsplash.com/photo-1667328549104-c125874407be?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjbGVhbmluZyUyMHByb2Zlc3Npb25hbCUyMHBvcnRyYWl0fGVufDF8fHx8MTc2OTE0MTE1M3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral';
+  static const String _avatarOffice =
+      'https://images.unsplash.com/photo-1762341119317-fb5417c18407?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxvZmZpY2UlMjB3b3JrZXIlMjBwcm9mZXNzaW9uYWx8ZW58MXx8fHwxNzY5MTgxNTM4fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral';
+  /// Mock providers for Top Rated section. Avatars match MockDataRepository.ts
+  /// (Sparkle Home Cleaning, Floor Care Experts, Pro Office Clean).
   static List<ProviderListItem> _mockProviders(String townId) {
-    if (townId.isEmpty) return [];
     return [
       const ProviderListItem(
         id: 'p1',
-        displayName: 'Mike\'s Plumbing',
-        avatar: '',
+        displayName: 'Sparkle Home Cleaning',
+        avatar: _avatarSparkle,
         rating: 4.9,
-        reviewCount: 127,
+        reviewCount: 108,
         distance: '2.1 mi',
         responseTime: 'Within 2 hrs',
-        availableToday: true,
-        categoryNames: ['Plumbing'],
+        availableToday: false,
+        categoryNames: ['Cleaning'],
       ),
       const ProviderListItem(
         id: 'p2',
-        displayName: 'Quick Fix Electric',
-        avatar: '',
-        rating: 4.8,
-        reviewCount: 89,
+        displayName: 'Floor Care Experts',
+        avatar: _avatarSparkle,
+        rating: 4.9,
+        reviewCount: 63,
         distance: '3.0 mi',
         responseTime: 'Within 1 hr',
-        availableToday: true,
-        categoryNames: ['Electrical'],
+        availableToday: false,
+        categoryNames: ['Cleaning'],
       ),
       const ProviderListItem(
         id: 'p3',
-        displayName: 'Green Thumb Landscaping',
-        avatar: '',
-        rating: 4.7,
-        reviewCount: 64,
+        displayName: 'Pro Office Clean',
+        avatar: _avatarOffice,
+        rating: 4.8,
+        reviewCount: 159,
         distance: '1.5 mi',
         responseTime: 'Within 3 hrs',
         availableToday: false,
-        categoryNames: ['Landscaping'],
+        categoryNames: ['Cleaning'],
       ),
     ];
   }
@@ -102,6 +111,7 @@ class _FeaturedProvidersWidgetState extends State<FeaturedProvidersWidget> {
     return _buildContent();
   }
 
+  /// Loading skeleton – matches React: px-4 py-6, h-6 bg-white/20 w-48, then horizontal row of 3 cards min-w-[280px] h-32 bg-white/20 rounded-2xl gap-3.
   Widget _buildLoadingSkeleton() {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 24.h),
@@ -110,23 +120,28 @@ class _FeaturedProvidersWidgetState extends State<FeaturedProvidersWidget> {
         children: [
           Container(
             height: 24.h,
-            width: 180.w,
+            width: 192.w,
             decoration: BoxDecoration(
-              color: AllColor.muted,
+              color: AllColor.white.withOpacity(0.2),
               borderRadius: BorderRadius.circular(8.r),
             ),
           ),
           SizedBox(height: 16.h),
-          ...List.generate(3, (_) => Padding(
-            padding: EdgeInsets.only(bottom: 12.h),
-            child: Container(
-              height: 88.h,
-              decoration: BoxDecoration(
-                color: AllColor.muted,
-                borderRadius: BorderRadius.circular(16.r),
+          SizedBox(
+            height: 128.h,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: 3,
+              separatorBuilder: (_, __) => SizedBox(width: 12.w),
+              itemBuilder: (_, __) => Container(
+                width: 280.w,
+                decoration: BoxDecoration(
+                  color: AllColor.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(16.r),
+                ),
               ),
             ),
-          )),
+          ),
         ],
       ),
     );
@@ -140,14 +155,18 @@ class _FeaturedProvidersWidgetState extends State<FeaturedProvidersWidget> {
         children: [
           Row(
             children: [
-              Icon(Icons.trending_up, size: 22.sp, color: AllColor.foreground),
+              Icon(
+                Icons.trending_up,
+                size: 22.sp,
+                color: widget.lightHeader ? AllColor.white : AllColor.foreground,
+              ),
               SizedBox(width: 8.w),
               Text(
                 'Top Rated Providers',
                 style: TextStyle(
                   fontSize: 18.sp,
                   fontWeight: FontWeight.w600,
-                  color: AllColor.foreground,
+                  color: widget.lightHeader ? AllColor.white : AllColor.foreground,
                 ),
               ),
             ],
@@ -157,7 +176,9 @@ class _FeaturedProvidersWidgetState extends State<FeaturedProvidersWidget> {
             'Highly recommended in your area',
             style: TextStyle(
               fontSize: 14.sp,
-              color: AllColor.mutedForeground,
+              color: widget.lightHeader
+                  ? AllColor.white.withOpacity(0.9)
+                  : AllColor.mutedForeground,
             ),
           ),
           SizedBox(height: 16.h),
@@ -209,33 +230,44 @@ class _ProviderCardState extends State<_ProviderCard> {
       child: InkWell(
         onTap: widget.onTap,
         borderRadius: BorderRadius.circular(16.r),
-        child: Stack(
-          children: [
-            Padding(
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16.r),
+            border: Border.all(color: const Color(0xFFF3F4F6)),
+          ),
+          child: Stack(
+            children: [
+              Padding(
               padding: EdgeInsets.all(16.w),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12.r),
-                    child: Container(
-                      width: 64.w,
-                      height: 64.h,
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [Color(0xFF408AF1), Color(0xFF5ca3f5)],
+                  // Avatar: w-16 h-16 rounded-xl ring-2 ring-white shadow-md bg-gradient – matches React
+                  Container(
+                    width: 64.w,
+                    height: 64.h,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12.r),
+                      border: Border.all(color: AllColor.white, width: 2),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
                         ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AllColor.primary.withOpacity(0.3),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10.r),
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [Color(0xFF408AF1), Color(0xFF5ca3f5)],
                           ),
-                        ],
-                      ),
-                      child: p.avatar.isNotEmpty && !_imageError
+                        ),
+                        child: p.avatar.isNotEmpty && !_imageError
                           ? CachedNetworkImage(
                               imageUrl: p.avatar,
                               fit: BoxFit.cover,
@@ -275,22 +307,25 @@ class _ProviderCardState extends State<_ProviderCard> {
                                 ),
                               ),
                             ),
+                      ),
                     ),
                   ),
                   SizedBox(width: 16.w),
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          p.displayName,
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w500,
-                            color: AllColor.foreground,
+                    child: Padding(
+                      padding: EdgeInsets.only(right: 32.w),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            p.displayName,
+                            style: TextStyle(
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w500,
+                              color: AllColor.foreground,
+                            ),
                           ),
-                        ),
-                        SizedBox(height: 6.h),
+                          SizedBox(height: 4.h),
                         Row(
                           children: [
                             Icon(Icons.star, size: 16.sp, color: const Color(0xFFFBBF24)),
@@ -321,42 +356,29 @@ class _ProviderCardState extends State<_ProviderCard> {
                             ),
                           ],
                         ),
-                        if (p.availableToday) ...[
-                          SizedBox(height: 8.h),
-                          Container(
-                            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFD1FAE5),
-                              borderRadius: BorderRadius.circular(999.r),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Container(
-                                  width: 6.w,
-                                  height: 6.h,
-                                  decoration: const BoxDecoration(
-                                    color: Color(0xFF10B981),
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                                SizedBox(width: 6.w),
-                                Text(
-                                  'Available Today',
-                                  style: TextStyle(
-                                    fontSize: 12.sp,
-                                    fontWeight: FontWeight.w500,
-                                    color: const Color(0xFF047857),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
                       ],
                     ),
                   ),
+                ),  // Expanded
                 ],
+              ),
+            ),
+            // Subtle overlay – matches React from-[#408AF1]/5 (behind badge)
+            Positioned.fill(
+              child: IgnorePointer(
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16.r),
+                    gradient: LinearGradient(
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                      colors: [
+                        const Color(0xFF408AF1).withOpacity(0.03),
+                        Colors.transparent,
+                      ],
+                    ),
+                  ),
+                ),
               ),
             ),
             if (widget.isFirst)
@@ -389,6 +411,7 @@ class _ProviderCardState extends State<_ProviderCard> {
                 ),
               ),
           ],
+        ),
         ),
       ),
     );
