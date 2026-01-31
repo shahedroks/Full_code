@@ -6,6 +6,7 @@ import 'package:renizo/features/seller/models/seller_job_item.dart';
 class _EarningsColors {
   static const blueBg = Color(0xFF2384F4);
   static const gray50 = Color(0xFFF9FAFB);
+  static const gray200 = Color(0xFFF3F4F6);
   static const gray100 = Color(0xFFF3F4F6);
   static const gray400 = Color(0xFF9CA3AF);
   static const gray500 = Color(0xFF6B7280);
@@ -122,7 +123,7 @@ class _SellerEarningsScreenState extends State<SellerEarningsScreen> {
                 SizedBox(height: 16.h),
                 _TransactionsCard(transactions: _transactions),
                 SizedBox(height: 16.h),
-                _WithdrawalButton(),
+                // _WithdrawalButton(),
               ],
             ),
           ),
@@ -226,7 +227,7 @@ class _PeriodCard extends StatelessWidget {
                   padding: EdgeInsets.all(16.w),
                   decoration: BoxDecoration(
                     gradient: isSelected ? const LinearGradient(colors: [_EarningsColors.blueGradientStart, _EarningsColors.blueGradientEnd], begin: Alignment.topLeft, end: Alignment.bottomRight) : null,
-                    color: isSelected ? null : _EarningsColors.gray50,
+                    color: isSelected ? null : _EarningsColors.gray200,
                     borderRadius: BorderRadius.circular(16.r),
                     boxShadow: isSelected ? [BoxShadow(color: _EarningsColors.blueGradientStart.withOpacity(0.3), blurRadius: 12, offset: const Offset(0, 2))] : null,
                   ),
@@ -234,9 +235,9 @@ class _PeriodCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(label, style: TextStyle(fontSize: 12.sp, color: isSelected ? Colors.white.withOpacity(0.8) : _EarningsColors.gray500)),
+                      Text(label, style: TextStyle(fontSize: 12.sp, color: isSelected ? Colors.white.withOpacity(0.85) : _EarningsColors.gray600)),
                       SizedBox(height: 4.h),
-                      Text('\$${amount.toStringAsFixed(0)}', style: TextStyle(fontSize: 22.sp, fontWeight: FontWeight.w600, color: isSelected ? Colors.white : _EarningsColors.gray900)),
+                      Text('\$${amount.toStringAsFixed(1)}', style: TextStyle(fontSize: 22.sp, fontWeight: FontWeight.w600, color: isSelected ? Colors.white : _EarningsColors.gray700)),
                     ],
                   ),
                 ),

@@ -63,16 +63,16 @@ dev_dependencies:
 flutter_native_splash:
     android: true
     ios: true
-    color: "#EDF1F4"
+    color: "#ECF0F3"
     image: assets/Renizo.png
     # branding: assets/Renizo.png
 
     branding_bottom_padding_ios: 35
 #
-    color_dark: "#EDF1F4"
+    color_dark: "#ECF0F3"
 #
     android_12:
-      color: "#EDF1F4"
+      color: "#ECF0F3"
       color_dark: "#332828"
       image: assets/Renizo.png
 #      branding: assets/Renizo.png
