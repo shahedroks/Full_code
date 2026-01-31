@@ -8,6 +8,7 @@ class BookingDisplayItem {
     required this.time,
     required this.status,
     required this.categoryName,
+    this.scheduledDateTime,
   });
 
   final String id;
@@ -17,6 +18,8 @@ class BookingDisplayItem {
   final String time;
   final BookingStatus status;
   final String categoryName;
+  /// Optional; used by MessagesScreen for sorting and time-ago.
+  final DateTime? scheduledDateTime;
 }
 
 enum BookingStatus {
@@ -75,24 +78,28 @@ Future<List<BookingDisplayItem>> loadBookingsForCustomer(String customerId) asyn
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     return '${months[d.month - 1]} ${d.day}';
   }
+  final t1 = DateTime(tomorrow.year, tomorrow.month, tomorrow.day, 10, 0);
+  final t2 = DateTime(today.year, today.month, today.day, 15, 0);
   return [
     BookingDisplayItem(
       id: 'booking1',
       providerName: 'Mike Johnson',
-      providerAvatar: '',
+      providerAvatar: 'https://i.pravatar.cc/300?u=mike-johnson',
       date: dateStr(tomorrow),
       time: '10:00',
       status: BookingStatus.pending,
       categoryName: 'Residential Cleaning',
+      scheduledDateTime: t1,
     ),
     BookingDisplayItem(
       id: 'booking2',
       providerName: 'Sparkle Home Cleaning',
-      providerAvatar: '',
+      providerAvatar: 'https://i.pravatar.cc/300?u=sparkle-cleaning',
       date: dateStr(today),
       time: '15:00',
       status: BookingStatus.confirmed,
       categoryName: 'Residential Cleaning',
+      scheduledDateTime: t2,
     ),
   ];
 }
@@ -110,7 +117,7 @@ Future<BookingDetailsModel?> getBookingById(String bookingId) async {
       return BookingDetailsModel(
         id: 'booking1',
         providerName: 'Mike Johnson',
-        providerAvatar: '',
+        providerAvatar: 'https://i.pravatar.cc/300?u=mike-johnson',
         categoryName: 'Residential Cleaning',
         townName: 'Terrace',
         scheduledDate: tomorrowStr,
@@ -125,7 +132,7 @@ Future<BookingDetailsModel?> getBookingById(String bookingId) async {
       return BookingDetailsModel(
         id: 'booking2',
         providerName: 'Sparkle Home Cleaning',
-        providerAvatar: '',
+        providerAvatar: 'https://i.pravatar.cc/300?u=sparkle-cleaning',
         categoryName: 'Residential Cleaning',
         townName: 'Terrace',
         scheduledDate: todayStr,

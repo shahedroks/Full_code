@@ -1,4 +1,17 @@
 {
   "dart.flutterSdkPath": "/Users/r2ait/development/flutter",
-  "dart.sdkPath": "/Users/r2ait/development/flutter/bin/cache/dart-sdk"
+  "dart.sdkPath": "/Users/r2ait/development/flutter/bin/cache/dart-sdk",
+  "editor.wordWrap": "on",
+  "[dart]": {
+    "editor.wordWrap": "on",
+    "editor.quickSuggestions": {
+      "other": true,
+      "comments": false,
+      "strings": true
+    },
+    "editor.suggestOnTriggerCharacters": true,
+    "editor.wordBasedSuggestions": "matchingDocuments",
+    "editor.tabCompletion": "on",
+    "editor.suggest.preview": true
+  }
 }

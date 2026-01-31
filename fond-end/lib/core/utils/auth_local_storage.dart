@@ -9,6 +9,7 @@ class AuthLocalStorage {
   static const _keyUserName = 'userName';
   static const _keyUserRole = 'userRole';
   static const _keyUserPhone = 'userPhone';
+  static const _keyUserAvatar = 'userAvatar';
   static const _keyHasOnboarded = 'hasOnboarded_';
   static const _keySelectedTown = 'selectedTown_';
 
@@ -39,6 +40,7 @@ class AuthLocalStorage {
     await p.remove(_keyUserName);
     await p.remove(_keyUserRole);
     await p.remove(_keyUserPhone);
+    await p.remove(_keyUserAvatar);
   }
 
   static Future<String?> getToken() async {
@@ -58,6 +60,7 @@ class AuthLocalStorage {
     final name = p.getString(_keyUserName);
     final roleStr = p.getString(_keyUserRole);
     final phone = p.getString(_keyUserPhone);
+    final avatar = p.getString(_keyUserAvatar);
     if (id == null || email == null || name == null || roleStr == null) return null;
     final role = roleStr == 'provider' ? UserRole.provider : UserRole.customer;
     return User(
@@ -66,8 +69,27 @@ class AuthLocalStorage {
       name: name,
       role: role,
       phone: phone ?? '',
+      avatar: avatar,
       createdAt: '',
     );
+  }
+
+  /// Update profile (name, email, phone, avatar). Keeps token, userId, role.
+  static Future<void> updateProfile({
+    required String name,
+    required String email,
+    required String phone,
+    String? avatar,
+  }) async {
+    final p = await _pref;
+    await p.setString(_keyUserName, name);
+    await p.setString(_keyEmail, email);
+    await p.setString(_keyUserPhone, phone);
+    if (avatar != null) {
+      await p.setString(_keyUserAvatar, avatar);
+    } else {
+      await p.remove(_keyUserAvatar);
+    }
   }
 
   static Future<bool> hasOnboarded(String userId) async {

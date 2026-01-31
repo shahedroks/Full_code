@@ -82,7 +82,7 @@ class CustomerBottomNavBar extends StatelessWidget {
       ),
       child: SafeArea(
         child: Padding(
-          padding: EdgeInsets.only(top: 8.h, left: 16.w, right: 16.w),
+          padding: EdgeInsets.only(top: 5, left: 16.w, right: 16.w),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: List.generate(_tabs.length, (index) {
