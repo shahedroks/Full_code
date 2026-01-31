@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:renizo/features/bookings/data/bookings_mock_data.dart';
 import 'package:renizo/features/home/widgets/customer_header.dart';
 import 'package:renizo/features/nav_bar/screen/bottom_nav_bar.dart';
+import 'package:renizo/features/notifications/screens/notifications_screen.dart';
 import 'package:renizo/features/town/screens/town_selection_screen.dart';
 import 'package:renizo/core/models/town.dart';
 
@@ -123,11 +124,15 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
   void _onNotifications() {
     widget.onNotifications?.call();
-    if (widget.onNotifications == null && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Notifications')),
-      );
-    }
+    if (widget.onNotifications != null) return;
+    if (!mounted) return;
+    Navigator.of(context).push<void>(
+      MaterialPageRoute<void>(
+        builder: (context) => NotificationsScreen(
+          onBack: () => Navigator.of(context).pop(),
+        ),
+      ),
+    );
   }
 
   void _onNavTabTap(int index) {

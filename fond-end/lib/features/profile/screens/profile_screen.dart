@@ -10,6 +10,9 @@ import 'package:renizo/features/auth/screens/login_screen.dart';
 import 'package:renizo/features/home/widgets/customer_header.dart';
 import 'package:renizo/features/profile/screens/edit_profile_screen.dart';
 import 'package:renizo/features/profile/screens/payment_methods_screen.dart';
+import 'package:renizo/features/profile/screens/settings_screen.dart';
+import 'package:renizo/features/profile/screens/help_support_screen.dart';
+import 'package:renizo/features/notifications/screens/notifications_screen.dart';
 import 'package:renizo/features/town/screens/town_selection_screen.dart';
 import 'package:renizo/core/models/town.dart';
 
@@ -71,11 +74,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   void _onNotifications() {
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Notifications')),
-      );
-    }
+    if (!mounted) return;
+    Navigator.of(context).push<void>(
+      MaterialPageRoute<void>(
+        builder: (context) => NotificationsScreen(
+          onBack: () => Navigator.of(context).pop(),
+        ),
+      ),
+    );
   }
 
   @override
@@ -149,9 +155,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     if (!mounted) return;
     Navigator.of(context).push<void>(
       MaterialPageRoute<void>(
-        builder: (context) => Scaffold(
-          appBar: AppBar(title: const Text('Settings')),
-          body: const Center(child: Text('Settings – coming soon')),
+        builder: (context) => SettingsScreen(
+          onBack: () => Navigator.of(context).pop(),
         ),
       ),
     );
@@ -161,9 +166,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     if (!mounted) return;
     Navigator.of(context).push<void>(
       MaterialPageRoute<void>(
-        builder: (context) => Scaffold(
-          appBar: AppBar(title: const Text('Help & Support')),
-          body: const Center(child: Text('Help & Support – coming soon')),
+        builder: (context) => HelpSupportScreen(
+          onBack: () => Navigator.of(context).pop(),
         ),
       ),
     );

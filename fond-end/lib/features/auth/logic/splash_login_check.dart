@@ -4,7 +4,7 @@ import 'package:renizo/core/utils/auth_local_storage.dart';
 import 'package:renizo/features/auth/screens/login_screen.dart';
 import 'package:renizo/features/nav_bar/screen/bottom_nav_bar.dart';
 import 'package:renizo/features/onboarding/screens/onboarding_slides_screen.dart';
-import 'package:renizo/features/seller/screens/seller_bottom_nav.dart';
+import 'package:renizo/features/seller/screens/provider_app_screen.dart';
 import 'package:renizo/features/town/screens/town_selection_screen.dart';
 
 /// After splash: no auth → Login; customer → onboarding/town then BottomNav; provider → SellerBottomNav.
@@ -17,7 +17,7 @@ void loginCheck(BuildContext context) async {
     return;
   }
   if (user.isProvider) {
-    context.go(SellerBottomNav.routeName);
+    context.go(ProviderAppScreen.routeName);
     return;
   }
   final hasOnboarded = await AuthLocalStorage.hasOnboarded(user.id);

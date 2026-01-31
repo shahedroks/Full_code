@@ -5,6 +5,7 @@ import 'package:renizo/core/constants/color_control/all_color.dart';
 import 'package:renizo/features/bookings/data/bookings_mock_data.dart';
 import 'package:renizo/features/home/widgets/customer_header.dart';
 import 'package:renizo/features/messages/screens/chat_screen.dart';
+import 'package:renizo/features/notifications/screens/notifications_screen.dart';
 import 'package:renizo/features/town/screens/town_selection_screen.dart';
 import 'package:renizo/core/models/town.dart';
 
@@ -98,11 +99,15 @@ class _MessagesScreenState extends State<MessagesScreen> {
 
   void _onNotifications() {
     widget.onNotifications?.call();
-    if (widget.onNotifications == null && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Notifications')),
-      );
-    }
+    if (widget.onNotifications != null) return;
+    if (!mounted) return;
+    Navigator.of(context).push<void>(
+      MaterialPageRoute<void>(
+        builder: (context) => NotificationsScreen(
+          onBack: () => Navigator.of(context).pop(),
+        ),
+      ),
+    );
   }
 
   @override

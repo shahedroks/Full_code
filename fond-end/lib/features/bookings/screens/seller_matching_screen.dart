@@ -6,6 +6,7 @@ import 'package:renizo/core/models/provider_list_item.dart';
 import 'package:renizo/core/models/town.dart';
 import 'package:renizo/features/home/widgets/customer_header.dart';
 import 'package:renizo/features/nav_bar/screen/bottom_nav_bar.dart';
+import 'package:renizo/features/notifications/screens/notifications_screen.dart';
 import 'package:renizo/features/town/screens/town_selection_screen.dart';
 
 /// Seller matching – full conversion from React SellerMatching.tsx.
@@ -111,11 +112,15 @@ class _SellerMatchingScreenState extends ConsumerState<SellerMatchingScreen> {
 
   void _onNotifications() {
     widget.onNotifications?.call();
-    if (widget.onNotifications == null && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Notifications')),
-      );
-    }
+    if (widget.onNotifications != null) return;
+    if (!mounted) return;
+    Navigator.of(context).push<void>(
+      MaterialPageRoute<void>(
+        builder: (context) => NotificationsScreen(
+          onBack: () => Navigator.of(context).pop(),
+        ),
+      ),
+    );
   }
 
   @override

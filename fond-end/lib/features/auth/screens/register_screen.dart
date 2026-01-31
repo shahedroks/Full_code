@@ -5,7 +5,7 @@ import 'package:renizo/core/constants/color_control/all_color.dart';
 import 'package:renizo/core/models/user.dart';
 import 'package:renizo/core/utils/auth_local_storage.dart';
 import 'package:renizo/features/onboarding/screens/onboarding_slides_screen.dart';
-import 'package:renizo/features/seller/screens/seller_bottom_nav.dart';
+import 'package:renizo/features/seller/screens/provider_app_screen.dart';
 
 /// Register – converted from React RegisterScreen.tsx.
 class RegisterScreen extends StatefulWidget {
@@ -63,7 +63,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final user = await AuthLocalStorage.getCurrentUser();
     if (user == null) return;
     if (user.isProvider) {
-      context.go(SellerBottomNav.routeName);
+      context.go(ProviderAppScreen.routeName);
     } else {
       context.go(OnboardingSlidesScreen.routeName);
     }

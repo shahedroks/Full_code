@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:renizo/features/home/widgets/customer_header.dart';
 import 'package:renizo/features/nav_bar/screen/bottom_nav_bar.dart';
+import 'package:renizo/features/notifications/screens/notifications_screen.dart';
 import 'package:renizo/features/town/screens/town_selection_screen.dart';
 import 'package:renizo/core/models/town.dart';
 
@@ -107,11 +108,14 @@ class _PaymentMethodsScreenState extends ConsumerState<PaymentMethodsScreen> {
   }
 
   void _onNotifications() {
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Notifications')),
-      );
-    }
+    if (!mounted) return;
+    Navigator.of(context).push<void>(
+      MaterialPageRoute<void>(
+        builder: (context) => NotificationsScreen(
+          onBack: () => Navigator.of(context).pop(),
+        ),
+      ),
+    );
   }
 
   void _onNavTabTap(int index) {
@@ -200,27 +204,39 @@ class _PaymentMethodsScreenState extends ConsumerState<PaymentMethodsScreen> {
     );
   }
 
+
   @override
   Widget build(BuildContext context) {
     if (_showAddCard) {
       return AddCardScreen(
         onBack: () => _setShowAddCard(false),
         onAdd: _onAddCard,
+        selectedTownName: widget.selectedTownName ?? _selectedTownName,
+        selectedTownId: widget.selectedTownId ?? _selectedTownId,
+        onChangeTown: _onChangeTown,
+        onNotifications: _onNotifications,
+        onNavTabTap: _onNavTabTap,
       );
     }
     return Scaffold(
       backgroundColor: _bgBlue,
-      body: SafeArea(
-        child: Column(
-          children: [
-            _buildHeader(),
-            Expanded(
-              child: _paymentMethods.isEmpty
-                  ? _buildEmptyState()
-                  : _buildList(),
-            ),
-          ],
-        ),
+      resizeToAvoidBottomInset: true,
+      bottomNavigationBar: CustomerBottomNavBar(
+        currentIndex: 4,
+        onTabTap: _onNavTabTap,
+      ),
+      body: Column(
+        children: [
+          CustomerHeader(
+            selectedTownName: widget.selectedTownName ?? _selectedTownName,
+            onChangeTown: _onChangeTown,
+            onNotifications: _onNotifications,
+          ),
+          _buildHeader(),
+          Expanded(
+            child: _paymentMethods.isEmpty ? _buildEmptyState() : _buildList(),
+          ),
+        ],
       ),
     );
   }
@@ -512,15 +528,26 @@ class _CardTile extends StatelessWidget {
 }
 
 /// Add Card – full conversion from React AddCardScreen.
+/// Same app header and bottom nav as CustomerHomeScreen.
 class AddCardScreen extends StatefulWidget {
   const AddCardScreen({
     super.key,
     required this.onBack,
     required this.onAdd,
+    this.selectedTownName,
+    this.selectedTownId,
+    this.onChangeTown,
+    this.onNotifications,
+    this.onNavTabTap,
   });
 
   final VoidCallback onBack;
   final void Function(PaymentMethodItem card) onAdd;
+  final String? selectedTownName;
+  final String? selectedTownId;
+  final Future<void> Function()? onChangeTown;
+  final VoidCallback? onNotifications;
+  final void Function(int index)? onNavTabTap;
 
   @override
   State<AddCardScreen> createState() => _AddCardScreenState();
@@ -532,8 +559,48 @@ class _AddCardScreenState extends State<AddCardScreen> {
   final _expiryMonthController = TextEditingController();
   final _expiryYearController = TextEditingController();
   final _cvvController = TextEditingController();
+  String? _selectedTownName;
+  String? _selectedTownId;
 
   static const Color _bgBlue = Color(0xFF2384F4);
+
+  Future<void> _onChangeTown() async {
+    widget.onChangeTown?.call();
+    if (widget.onChangeTown != null) return;
+    if (!mounted) return;
+    final town = await Navigator.of(context).push<Town>(
+      MaterialPageRoute<Town>(
+        builder: (context) => TownSelectionScreen(
+          onSelectTown: (t) => Navigator.of(context).pop(t),
+          canClose: true,
+        ),
+      ),
+    );
+    if (town != null && mounted) {
+      setState(() {
+        _selectedTownName = town.name;
+        _selectedTownId = town.id;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Now showing services in ${town.name}')),
+        );
+      }
+    }
+  }
+
+  void _onNotifications() {
+    widget.onNotifications?.call();
+    if (widget.onNotifications != null) return;
+    if (!mounted) return;
+    Navigator.of(context).push<void>(
+      MaterialPageRoute<void>(
+        builder: (context) => NotificationsScreen(
+          onBack: () => Navigator.of(context).pop(),
+        ),
+      ),
+    );
+  }
 
   @override
   void dispose() {
@@ -608,76 +675,83 @@ class _AddCardScreenState extends State<AddCardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _bgBlue,
-      body: SafeArea(
-        child: Column(
-          children: [
-            _buildHeader(),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 24.h),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildField('Card Number', _cardNumberController, '1234 5678 9012 3456', 19, (v) => _onCardNumberChange(v)),
-                    SizedBox(height: 16.h),
-                    _buildField('Cardholder Name', _holderNameController, 'John Doe', null, null),
-                    SizedBox(height: 16.h),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _buildField('Month', _expiryMonthController, 'MM', 2,                           (v) {
-                            final d = _digitsOnly(v).length > 2 ? _digitsOnly(v).substring(0, 2) : _digitsOnly(v);
-                            if (d != _expiryMonthController.text) {
-                              _expiryMonthController.text = d;
-                              _expiryMonthController.selection = TextSelection.collapsed(offset: d.length);
-                            }
-                          }),
-                        ),
-                        SizedBox(width: 12.w),
-                        Expanded(
-                          child: _buildField('Year', _expiryYearController, 'YY', 2, (v) {
-                            final d = _digitsOnly(v).length > 2 ? _digitsOnly(v).substring(0, 2) : _digitsOnly(v);
-                            if (d != _expiryYearController.text) {
-                              _expiryYearController.text = d;
-                              _expiryYearController.selection = TextSelection.collapsed(offset: d.length);
-                            }
-                          }),
-                        ),
-                        SizedBox(width: 12.w),
-                        Expanded(
-                          child: _buildField('CVV', _cvvController, '123', 3, (v) {
-                            final d = _digitsOnly(v).length > 3 ? _digitsOnly(v).substring(0, 3) : _digitsOnly(v);
-                            if (d != _cvvController.text) {
-                              _cvvController.text = d;
-                              _cvvController.selection = TextSelection.collapsed(offset: d.length);
-                            }
-                          }),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 24.h),
-                    Container(
-                      padding: EdgeInsets.all(16.w),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(16.r),
-                        border: Border.all(color: Colors.white.withOpacity(0.2)),
+      bottomNavigationBar: CustomerBottomNavBar(
+        currentIndex: 4,
+        onTabTap: widget.onNavTabTap ?? (_) {},
+      ),
+      body: Column(
+        children: [
+          CustomerHeader(
+            selectedTownName: widget.selectedTownName ?? _selectedTownName,
+            onChangeTown: _onChangeTown,
+            onNotifications: _onNotifications,
+          ),
+          _buildHeader(),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 24.h),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildField('Card Number', _cardNumberController, '1234 5678 9012 3456', 19, (v) => _onCardNumberChange(v)),
+                  SizedBox(height: 16.h),
+                  _buildField('Cardholder Name', _holderNameController, 'John Doe', null, null),
+                  SizedBox(height: 16.h),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildField('Month', _expiryMonthController, 'MM', 2, (v) {
+                          final d = _digitsOnly(v).length > 2 ? _digitsOnly(v).substring(0, 2) : _digitsOnly(v);
+                          if (d != _expiryMonthController.text) {
+                            _expiryMonthController.text = d;
+                            _expiryMonthController.selection = TextSelection.collapsed(offset: d.length);
+                          }
+                        }),
                       ),
-                      child: Text(
-                        'Secure Payment: Your payment information is encrypted and securely stored. We never share your card details with service providers.',
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          color: Colors.white.withOpacity(0.9),
-                          height: 1.4,
-                        ),
+                      SizedBox(width: 12.w),
+                      Expanded(
+                        child: _buildField('Year', _expiryYearController, 'YY', 2, (v) {
+                          final d = _digitsOnly(v).length > 2 ? _digitsOnly(v).substring(0, 2) : _digitsOnly(v);
+                          if (d != _expiryYearController.text) {
+                            _expiryYearController.text = d;
+                            _expiryYearController.selection = TextSelection.collapsed(offset: d.length);
+                          }
+                        }),
+                      ),
+                      SizedBox(width: 12.w),
+                      Expanded(
+                        child: _buildField('CVV', _cvvController, '123', 3, (v) {
+                          final d = _digitsOnly(v).length > 3 ? _digitsOnly(v).substring(0, 3) : _digitsOnly(v);
+                          if (d != _cvvController.text) {
+                            _cvvController.text = d;
+                            _cvvController.selection = TextSelection.collapsed(offset: d.length);
+                          }
+                        }),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 24.h),
+                  Container(
+                    padding: EdgeInsets.all(16.w),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(16.r),
+                      border: Border.all(color: Colors.white.withOpacity(0.2)),
+                    ),
+                    child: Text(
+                      'Secure Payment: Your payment information is encrypted and securely stored. We never share your card details with service providers.',
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        color: Colors.white.withOpacity(0.9),
+                        height: 1.4,
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

@@ -7,7 +7,7 @@ import 'package:renizo/features/auth/screens/register_screen.dart';
 import 'package:renizo/features/auth/screens/splash_screen.dart';
 import 'package:renizo/features/nav_bar/screen/bottom_nav_bar.dart';
 import 'package:renizo/features/onboarding/screens/onboarding_slides_screen.dart';
-import 'package:renizo/features/seller/screens/seller_bottom_nav.dart';
+import 'package:renizo/features/seller/screens/provider_app_screen.dart';
 import 'package:renizo/features/town/screens/town_selection_screen.dart';
 import 'package:renizo/features/home/screens/customer_home_screen.dart';
 
@@ -83,9 +83,9 @@ class AppRouter {
         builder: (context, state) => const SplashScreen(),
       ),
       GoRoute(
-        path: SellerBottomNav.routeName,
-        name: SellerBottomNav.routeName,
-        builder: (context, state) => const SellerBottomNav(),
+        path: ProviderAppScreen.routeName,
+        name: ProviderAppScreen.routeName,
+        builder: (context, state) => const ProviderAppScreen(),
       ),
     ],
   );

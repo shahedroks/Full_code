@@ -6,7 +6,7 @@ import 'package:renizo/core/utils/auth_local_storage.dart';
 import 'package:renizo/features/auth/screens/register_screen.dart';
 import 'package:renizo/features/nav_bar/screen/bottom_nav_bar.dart';
 import 'package:renizo/features/onboarding/screens/onboarding_slides_screen.dart';
-import 'package:renizo/features/seller/screens/seller_bottom_nav.dart';
+import 'package:renizo/features/seller/screens/provider_app_screen.dart';
 import 'package:renizo/features/town/screens/town_selection_screen.dart';
 
 /// Login – converted from React LoginScreen.tsx. Primary #2384F4 / AllColor.primary.
@@ -23,6 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
   bool _loading = false;
+  bool _loginAsProvider = false;
   String? _error;
 
   @override
@@ -104,7 +105,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final email = _emailController.text.trim();
     final password = _passwordController.text; // ignore: unused_local_variable
 
-    final isProvider = email == 'provider@demo.com';
+    final isProvider = _loginAsProvider;
 
     await AuthLocalStorage.saveSession(
       token: 'demo_token',
@@ -123,7 +124,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (user == null) return;
 
     if (user.isProvider) {
-      context.go(SellerBottomNav.routeName);
+      context.go(ProviderAppScreen.routeName);
     } else {
       final hasOnboarded = await AuthLocalStorage.hasOnboarded(user.id);
       if (!hasOnboarded) {
@@ -252,6 +253,31 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
+              ),
+
+              SizedBox(height: 24.h),
+
+              // Login as Service Provider switch
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Login as Service Provider',
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w500,
+                      color: AllColor.white,
+                    ),
+                  ),
+                  Switch(
+                    value: _loginAsProvider,
+                    onChanged: (value) => setState(() => _loginAsProvider = value),
+                    activeTrackColor: AllColor.white.withOpacity(0.8),
+                    activeThumbColor: AllColor.primary,
+                    inactiveTrackColor: AllColor.white.withOpacity(0.3),
+                    inactiveThumbColor: AllColor.white,
+                  ),
+                ],
               ),
 
               SizedBox(height: 24.h),

@@ -9,6 +9,7 @@ import 'package:renizo/features/home/widgets/customer_header.dart';
 import 'package:renizo/features/home/widgets/featured_providers.dart';
 import 'package:renizo/features/home/widgets/service_categories.dart';
 import 'package:renizo/features/home/widgets/welcome_banner.dart';
+import 'package:renizo/features/notifications/screens/notifications_screen.dart';
 import 'package:renizo/features/town/screens/town_selection_screen.dart';
 
 /// Customer main home – converted from React CustomerApp.tsx home content.
@@ -117,17 +118,22 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
 
   void _onNotifications() {
     widget.onNotifications?.call();
-    if (widget.onNotifications == null && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Notifications')),
-      );
-    }
+    if (widget.onNotifications != null) return;
+    if (!mounted) return;
+    Navigator.of(context).push<void>(
+      MaterialPageRoute<void>(
+        builder: (context) => NotificationsScreen(
+          onBack: () => Navigator.of(context).pop(),
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _customerAppBackground,
+          resizeToAvoidBottomInset: true,
       body: Column(
         children: [
           CustomerHeader(
@@ -198,7 +204,7 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
                 lightTitle: true,
               ),
             ),
-                SliverToBoxAdapter(child: SizedBox(height: 24.h)),
+                SliverToBoxAdapter(child: SizedBox(height: 25.h)),
               ],
             ),
           ),
